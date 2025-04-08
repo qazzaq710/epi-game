@@ -12,23 +12,35 @@
             align-items: center;
             height: 100vh;
         }
+        #gameContainer {
+            position: relative;
+            width: 400px;
+            height: 600px;
+        }
         #gameCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
             border: 1px solid #fff;
             background: #1a1a1a;
+        }
+        #playerImg {
+            position: absolute;
+            width: 53px;
+            height: 53px;
         }
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas" width="400" height="600"></canvas>
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="400" height="600"></canvas>
+        <img id="playerImg" src="data:image/gif;base64,/9j/4AAQSkZJRgABAQEAAAAAAAD...">
+    </div>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-
-        // Load the blinking image in GIF format
-        const playerImg = new Image();
-playerImg.src = 'blinking.gif'; // Вставь свою Base64-строку
-
+        const playerImgElement = document.getElementById('playerImg');
 
         // Player parameters
         let player = {
@@ -81,8 +93,9 @@ playerImg.src = 'blinking.gif'; // Вставь свою Base64-строку
                 player.x += player.speed;
             }
 
-            // Draw the player (should be blinking.gif)
-            ctx.drawImage(playerImg, player.x, player.y, player.displayWidth, player.displayHeight);
+            // Обнови позицию <img>
+            playerImgElement.style.left = player.x + 'px';
+            playerImgElement.style.top = player.y + 'px';
 
             frameCount++;
             if (frameCount % spawnRate === 0) {
@@ -148,7 +161,7 @@ playerImg.src = 'blinking.gif'; // Вставь свою Base64-строку
             const titleY = 30;
             const textSize = 20;
 
-            ctx.fillStyle = '#FF69B4'; // Розовый цвет
+            ctx.fillStyle = '#FF69B4';
             ctx.font = `bold ${textSize}px Arial`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -190,18 +203,17 @@ playerImg.src = 'blinking.gif'; // Вставь свою Base64-строку
                    rect1.y + rect1.height > rect2.y;
         }
 
-        playerImg.onload = () => {
+        // Запусти игру
+        playerImgElement.onload = () => {
             console.log("Blinking image loaded successfully!");
             gameLoop();
         };
 
-        playerImg.onerror = () => {
-            console.error("Failed to load blinking image! Check if blinking.gif exists in the same folder as index.html.");
+        playerImgElement.onerror = () => {
+            console.error("Failed to load blinking image!");
             ctx.fillStyle = 'white';
             ctx.font = '20px Arial';
             ctx.fillText('Failed to load image! Check console for details.', 50, 50);
-            ctx.fillStyle = 'blue';
-            ctx.fillRect(player.x, player.y, player.displayWidth, player.displayHeight);
         };
     </script>
 </body>
